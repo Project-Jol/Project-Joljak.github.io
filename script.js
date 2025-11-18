@@ -5,7 +5,7 @@ const routes = {
   '#contact': 'IDpv'
 };
 
-const sections = document.querySelectorAll('.content, .content1');
+const sections = document.querySelectorAll('.content');
 const navLinks = document.querySelectorAll('nav a');
 
 function activateSection(targetId) {
@@ -15,14 +15,16 @@ function activateSection(targetId) {
   });
 }
 
-function navigate(hash) {
-  if (!hash || hash === '#') hash = '#intro';
-  const routeId = routes[hash] || routes['#intro'];
-  sections.forEach(section => section.classList.remove('active'));
+function navigate(path) {
+  if (!path || path === '/' || path === '') path = '/intro';
+  const routeId = routes[path] || routes['/intro'];
+  document.querySelectorAll('.content').forEach(section => {
+    section.classList.remove('active');
+  });
   const targetSection = document.getElementById(routeId);
   if (targetSection) targetSection.classList.add('active');
-  if (window.location.hash !== hash) {
-    history.pushState({}, '', hash);
+  if (window.location.pathname !== path) {
+    history.pushState({}, '', path);
   }
 }
 
@@ -30,19 +32,24 @@ function navigate(hash) {
 navLinks.forEach(link => {
   link.addEventListener('click', (e) => {
     e.preventDefault();
-    const hash = link.getAttribute('href');
-    navigate(hash);
+    const path = link.getAttribute('href');
+    navigate(path);
   });
 });
 
 // 브라우저 뒤로가기/앞으로가기 이벤트 처리
-window.addEventListener('hashchange', () => {
-  navigate(window.location.hash);
+window.addEventListener('popstate', () => {
+  navigate(window.location.pathname);
 });
 
 // 페이지 로드 시 초기 라우팅
 window.addEventListener('load', () => {
-  navigate(window.location.hash);
+  if (sessionStorage.redirect) {
+    const redirect = sessionStorage.redirect;
+    delete sessionStorage.redirect;
+    history.replaceState(null, null, redirect);
+  }
+  navigate(window.location.pathname);
 });
 
 
