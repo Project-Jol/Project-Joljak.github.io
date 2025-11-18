@@ -45,7 +45,7 @@ body {
     .slider-container {
      
       margin: 0 auto;
-      width: 800px; /* 슬라이더의 너비 */
+      width: 80%; /* 슬라이더의 너비 */
       height: 370px; /* 슬라이더의 높이 */
       overflow: hidden; /* 영역을 벗어나는 이미지는 숨김 처리 */
       border-radius: 10px;
