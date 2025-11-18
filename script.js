@@ -1,12 +1,11 @@
-// --- SPA 라우팅 관련 변수 및 함수 ---
 const routes = {
-  '/intro': 'intro',
-  '/ppt': 'IDppt',
-  '/planning': 'IDplanning',
-  '/contact': 'IDpv'
+  '#intro': 'intro',
+  '#ppt': 'IDppt',
+  '#planning': 'IDplanning',
+  '#contact': 'IDpv'
 };
 
-const sections = document.querySelectorAll('.content');
+const sections = document.querySelectorAll('.content, .content1');
 const navLinks = document.querySelectorAll('nav a');
 
 function activateSection(targetId) {
@@ -16,16 +15,14 @@ function activateSection(targetId) {
   });
 }
 
-function navigate(path) {
-  if (!path || path === '/' || path === '') path = '/intro';
-  const routeId = routes[path] || routes['/intro'];
-  document.querySelectorAll('.content').forEach(section => {
-    section.classList.remove('active');
-  });
+function navigate(hash) {
+  if (!hash || hash === '#') hash = '#intro';
+  const routeId = routes[hash] || routes['#intro'];
+  sections.forEach(section => section.classList.remove('active'));
   const targetSection = document.getElementById(routeId);
   if (targetSection) targetSection.classList.add('active');
-  if (window.location.pathname !== path) {
-    history.pushState({}, '', path);
+  if (window.location.hash !== hash) {
+    history.pushState({}, '', hash);
   }
 }
 
@@ -33,24 +30,19 @@ function navigate(path) {
 navLinks.forEach(link => {
   link.addEventListener('click', (e) => {
     e.preventDefault();
-    const path = link.getAttribute('href');
-    navigate(path);
+    const hash = link.getAttribute('href');
+    navigate(hash);
   });
 });
 
 // 브라우저 뒤로가기/앞으로가기 이벤트 처리
-window.addEventListener('popstate', () => {
-  navigate(window.location.pathname);
+window.addEventListener('hashchange', () => {
+  navigate(window.location.hash);
 });
 
 // 페이지 로드 시 초기 라우팅
 window.addEventListener('load', () => {
-  if (sessionStorage.redirect) {
-    const redirect = sessionStorage.redirect;
-    delete sessionStorage.redirect;
-    history.replaceState(null, null, redirect);
-  }
-  navigate(window.location.pathname);
+  navigate(window.location.hash);
 });
 
 
